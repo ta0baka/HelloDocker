@@ -6,7 +6,7 @@ namespace HelloDocker
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, Dоcker!");
+            Console.WriteLine("Hello, Dоckеr!");
         }
     }
 }
