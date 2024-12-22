@@ -36,4 +36,4 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t HelloDocker12 -f HelloDocker12/Dockerfile HelloDocker12
+          docker build -t HelloDocker -f HelloDocker/Dockerfile HelloDocker
