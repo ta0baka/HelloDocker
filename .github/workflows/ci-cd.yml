@@ -1,39 +1,42 @@
-name: CI/CD Pipeline
+name: Docker Image CI
 
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout out the repository
-        uses: actions/checkout@v3
+    # Шаг 1: Клонируем репозиторий
+    - name: Check out the repository
+      uses: actions/checkout@v3
 
-      - name: Set up .NET SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0'
+    # Шаг 2: Устанавливаем .NET SDK
+    - name: Set up .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0'
 
-      - name: Build Docker image
-        run: |
-          docker build -t hellodocker .
+    # Шаг 3: Восстанавливаем зависимости
+    - name: Restore dependencies
+      run: dotnet restore
 
-      - name: Restore dependencies
-        run: dotnet restore
+    # Шаг 4: Собираем проект
+    - name: Build the project
+      run: dotnet build --configuration Release
 
-      - name: Build the project
-        run: dotnet build --configuration Release
+    # Шаг 5: Запускаем unit-тесты (если они есть)
+    - name: Run tests
+      run: dotnet test --configuration Release
 
-      - name: Run tests
-        run: dotnet test --configuration Release
+    # Шаг 6: Публикуем проект
+    - name: Publish the project
+      run: dotnet publish --configuration Release --output ./out
 
-      - name: Publish the project
-        run: dotnet publish --configuration Release --output ./out
-
-      - name: Build Docker image
-        run: |
-          docker build -t HelloDocker -f HelloDocker/Dockerfile HelloDocker
+    # Шаг 7: Собираем Docker-образ
+    - name: Build Docker image
+      run: |
+        docker build -t HelloDocker12 -f HelloDocker12/Dockerfile HelloDocker12
