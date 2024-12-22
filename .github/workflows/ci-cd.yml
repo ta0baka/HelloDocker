@@ -10,27 +10,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout out the repository
+        uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0'
 
       - name: Build Docker image
         run: |
           docker build -t hellodocker .
 
-      - name: Run Unit Tests
-        run: |
-          echo "No unit tests to run"
+      - name: Restore dependencies
+        run: dotnet restore
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Build the project
+        run: dotnet build --configuration Release
 
-      - name: Push Docker image
+      - name: Run tests
+        run: dotnet test --configuration Release
+
+      - name: Publish the project
+        run: dotnet publish --configuration Release --output ./out
+
+      - name: Build Docker image
         run: |
-          docker tag hellodocker <your-dockerhub-username>/hellodocker
-          docker push <your-dockerhub-username>/hellodocker
+          docker build -t HelloDocker12 -f HelloDocker12/Dockerfile HelloDocker12
